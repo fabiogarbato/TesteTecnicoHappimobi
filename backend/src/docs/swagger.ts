@@ -6,7 +6,7 @@ const swaggerDefinition = {
     title: 'Happimobi - API de Reserva de Veículos',
     version: '1.0.0',
     description:
-      'API REST para gerenciamento de usuários, veículos e reservas. Todas as rotas (exceto /login) exigem autenticação via Bearer token.',
+      'API REST para gerenciamento de usuários, veículos e reservas. Todas as rotas (exceto /login) exigem autenticação via Bearer token. Documentação e testes fazem parte do teste técnico de Fábio Garbato.',
   },
   servers: [
     {
