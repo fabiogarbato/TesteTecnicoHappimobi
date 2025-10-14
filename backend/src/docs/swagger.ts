@@ -72,6 +72,61 @@ const swaggerDefinition = {
           details: {},
         },
       },
+      Vehicle: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', example: '64b8f94c7d3c1a0012123456' },
+          name: { type: 'string', example: 'Onix LT 1.0' },
+          brand: { type: 'string', example: 'Chevrolet' },
+          modelName: { type: 'string', example: 'Hatch' },
+          year: { type: 'integer', example: 2024 },
+          licensePlate: { type: 'string', example: 'ABC1D23' },
+          color: { type: 'string', example: 'Branco' },
+          status: { type: 'string', enum: ['available', 'reserved'], example: 'available' },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+      CreateVehicleRequest: {
+        type: 'object',
+        required: ['name', 'brand', 'modelName', 'year', 'licensePlate'],
+        properties: {
+          name: { type: 'string', example: 'Onix LT 1.0' },
+          brand: { type: 'string', example: 'Chevrolet' },
+          modelName: { type: 'string', example: 'Hatch' },
+          year: { type: 'integer', example: 2024 },
+          licensePlate: { type: 'string', example: 'ABC1D23' },
+          color: { type: 'string', example: 'Branco' },
+        },
+      },
+      UpdateVehicleRequest: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', example: 'Onix LT 1.0 Turbo' },
+          brand: { type: 'string', example: 'Chevrolet' },
+          modelName: { type: 'string', example: 'Hatch' },
+          year: { type: 'integer', example: 2025 },
+          licensePlate: { type: 'string', example: 'ABC1D23' },
+          color: { type: 'string', example: 'Vermelho' },
+        },
+      },
+      Reservation: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', example: '64b8f94c7d3c1a0012129999' },
+          status: { type: 'string', enum: ['active', 'released'], example: 'active' },
+          reservedAt: { type: 'string', format: 'date-time' },
+          releasedAt: { type: 'string', format: 'date-time', nullable: true },
+          vehicle: { $ref: '#/components/schemas/Vehicle' },
+        },
+      },
+      ReserveVehicleRequest: {
+        type: 'object',
+        required: ['vehicleId'],
+        properties: {
+          vehicleId: { type: 'string', example: '64b8f94c7d3c1a0012123456' },
+        },
+      },
     },
   },
   security: [{ bearerAuth: [] }],
@@ -233,6 +288,259 @@ const swaggerDefinition = {
             content: {
               'application/json': {
                 schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/vehicles': {
+      post: {
+        tags: ['Veículos'],
+        summary: 'Cadastra um novo veículo',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/CreateVehicleRequest' },
+            },
+          },
+        },
+        responses: {
+          '201': {
+            description: 'Veículo criado',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/Vehicle' },
+              },
+            },
+          },
+          '400': {
+            description: 'Payload inválido',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+          '409': {
+            description: 'Placa já cadastrada',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+      get: {
+        tags: ['Veículos'],
+        summary: 'Lista veículos cadastrados',
+        responses: {
+          '200': {
+            description: 'Listagem retornada',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: { $ref: '#/components/schemas/Vehicle' },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/vehicles/{id}': {
+      put: {
+        tags: ['Veículos'],
+        summary: 'Atualiza dados do veículo',
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            required: true,
+            schema: { type: 'string' },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/UpdateVehicleRequest' },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Veículo atualizado',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/Vehicle' },
+              },
+            },
+          },
+          '400': {
+            description: 'Payload inválido',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+          '404': {
+            description: 'Veículo não encontrado',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+          '409': {
+            description: 'Placa já cadastrada',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+      delete: {
+        tags: ['Veículos'],
+        summary: 'Remove veículo',
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            required: true,
+            schema: { type: 'string' },
+          },
+        ],
+        responses: {
+          '204': {
+            description: 'Veículo removido',
+          },
+          '404': {
+            description: 'Veículo não encontrado',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+          '409': {
+            description: 'Veículo reservado não pode ser removido',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/reservations': {
+      post: {
+        tags: ['Reservas'],
+        summary: 'Reserva um veículo para o usuário autenticado',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ReserveVehicleRequest' },
+            },
+          },
+        },
+        responses: {
+          '201': {
+            description: 'Reserva criada',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/Reservation' },
+              },
+            },
+          },
+          '404': {
+            description: 'Veículo não encontrado',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+          '409': {
+            description: 'Regras de reserva violadas',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/reservations/{id}/release': {
+      post: {
+        tags: ['Reservas'],
+        summary: 'Libera um veículo reservado',
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            required: true,
+            schema: { type: 'string' },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Reserva liberada',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/Reservation' },
+              },
+            },
+          },
+          '403': {
+            description: 'Reserva não pertence ao usuário',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+          '404': {
+            description: 'Reserva não encontrada',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+          '409': {
+            description: 'Reserva já liberada',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/reservations/me': {
+      get: {
+        tags: ['Reservas'],
+        summary: 'Lista veículos reservados pelo usuário autenticado',
+        responses: {
+          '200': {
+            description: 'Listagem retornada',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: { $ref: '#/components/schemas/Reservation' },
+                },
               },
             },
           },
