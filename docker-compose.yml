@@ -11,6 +11,14 @@ services:
       - "3000:3000"
     depends_on:
       - mongo
+  api-tests:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: tester
+    container_name: happimobi_api_tests
+    environment:
+      NODE_ENV: test
   mongo:
     image: mongo:7
     container_name: happimobi_mongo
