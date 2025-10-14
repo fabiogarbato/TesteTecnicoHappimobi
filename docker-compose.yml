@@ -19,6 +19,13 @@ services:
     container_name: happimobi_api_tests
     environment:
       NODE_ENV: test
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: happimobi_frontend
+    ports:
+      - "4200:80"
   mongo:
     image: mongo:7
     container_name: happimobi_mongo
