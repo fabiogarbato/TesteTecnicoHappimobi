@@ -29,10 +29,12 @@ export class ReservationRepository {
   }
 
   async findUserReservations(userId: string): Promise<ReservationDocument[]> {
-    return ReservationModel.find({ user: userId })
+    const reservations = await ReservationModel.find({ user: userId })
       .sort({ reservedAt: -1 })
       .populate('vehicle')
       .exec();
+
+    return reservations.filter((reservation) => reservation.vehicle !== null);
   }
 
   async save(reservation: ReservationDocument): Promise<ReservationDocument> {

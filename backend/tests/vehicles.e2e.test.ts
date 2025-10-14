@@ -206,5 +206,11 @@ describe('Vehicles & Reservations API', () => {
       .set('Authorization', `Bearer ${token}`);
 
     expect(deleteAfterRelease.status).toBe(204);
+
+    const reservationsAfterDelete = await request(app)
+      .get('/reservations/me')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(reservationsAfterDelete.status).toBe(200);
   });
 });
