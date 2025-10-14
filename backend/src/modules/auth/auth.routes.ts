@@ -11,3 +11,4 @@ const authController = new AuthController(authService);
 export const authRouter = Router();
 
 authRouter.post('/login', authController.login);
+authRouter.post('/register', authController.register);

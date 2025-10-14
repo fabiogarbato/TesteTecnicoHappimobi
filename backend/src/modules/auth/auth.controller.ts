@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import { AuthService } from './auth.service';
-import { validateLoginInput } from './auth.validators';
+import { validateLoginInput, validateRegisterInput } from './auth.validators';
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -11,6 +11,16 @@ export class AuthController {
       const credentials = validateLoginInput(req.body);
       const result = await this.authService.login(credentials);
       res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const payload = validateRegisterInput(req.body);
+      const result = await this.authService.register(payload);
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }

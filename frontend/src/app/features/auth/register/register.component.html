@@ -1,16 +1,30 @@
 <section class="auth-card">
   <header class="auth-card__header">
-    <h1>Bem-vindo de volta</h1>
-    <p>Faça login para gerenciar reservas e veículos.</p>
+    <h1>Criar nova conta</h1>
+    <p>Informe seus dados para acessar o painel de gestão.</p>
   </header>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-field" [class.form-field--invalid]="nameInvalid">
+      <label for="name">Nome completo</label>
+      <input
+        id="name"
+        type="text"
+        placeholder="João da Silva"
+        formControlName="name"
+        autocomplete="name"
+      />
+      <small *ngIf="nameInvalid">
+        Informe um nome válido.
+      </small>
+    </div>
+
     <div class="form-field" [class.form-field--invalid]="emailInvalid">
       <label for="email">E-mail</label>
       <input
         id="email"
         type="email"
-        placeholder="admin@teste.com"
+        placeholder="usuario@teste.com"
         formControlName="email"
         autocomplete="email"
       />
@@ -24,9 +38,9 @@
       <input
         id="password"
         type="password"
-        placeholder="Senha"
+        placeholder="Senha com 6 caracteres"
         formControlName="password"
-        autocomplete="current-password"
+        autocomplete="new-password"
       />
       <small *ngIf="passwordInvalid">
         A senha deve possuir ao menos 6 caracteres.
@@ -38,16 +52,16 @@
     </p>
 
     <button type="submit" [disabled]="submitting()">
-      <span *ngIf="!submitting(); else loading">Entrar</span>
+      <span *ngIf="!submitting(); else loading">Criar conta</span>
     </button>
 
     <ng-template #loading>
-      <span>Entrando...</span>
+      <span>Criando conta...</span>
     </ng-template>
   </form>
 
   <footer class="auth-card__footer">
-    <span>Não tem uma conta?</span>
-    <a routerLink="/register" class="link">Criar nova conta</a>
+    <span>Já tem uma conta?</span>
+    <button type="button" class="link" (click)="goToLogin()">Entrar</button>
   </footer>
 </section>

@@ -7,6 +7,12 @@ interface LoginRequest {
   password: string;
 }
 
+interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export interface AuthResponse {
   token: string;
   user: {
@@ -36,6 +42,13 @@ export class AuthService {
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     const response$ = this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
+    const response = await firstValueFrom(response$);
+    this.setToken(response.token);
+    return response;
+  }
+
+  async register(payload: RegisterRequest): Promise<AuthResponse> {
+    const response$ = this.http.post<AuthResponse>(`${this.apiUrl}/register`, payload);
     const response = await firstValueFrom(response$);
     this.setToken(response.token);
     return response;
