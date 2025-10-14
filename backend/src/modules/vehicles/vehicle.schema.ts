@@ -9,6 +9,9 @@ export interface VehicleDocument extends Document {
   year: number;
   licensePlate: string;
   color?: string;
+  category?: string;
+  engine?: string;
+  size?: number;
   status: VehicleStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -46,6 +49,18 @@ const vehicleSchema = new Schema<VehicleDocument>(
     color: {
       type: String,
       trim: true,
+    },
+    category: {
+      type: String,
+      trim: true,
+    },
+    engine: {
+      type: String,
+      trim: true,
+    },
+    size: {
+      type: Number,
+      min: 1,
     },
     status: {
       type: String,

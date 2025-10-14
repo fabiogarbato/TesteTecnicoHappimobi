@@ -55,13 +55,28 @@ describe('Vehicles & Reservations API', () => {
     await seedAdmin();
   });
 
-  const createVehiclePayload = (overrides: Partial<{ name: string; brand: string; modelName: string; year: number; licensePlate: string; color?: string }> = {}) => ({
+  const createVehiclePayload = (
+    overrides: Partial<{
+      name: string;
+      brand: string;
+      modelName: string;
+      year: number;
+      licensePlate: string;
+      color?: string;
+      type?: string;
+      engine?: string;
+      size?: number;
+    }> = {},
+  ) => ({
     name: 'Onix LT 1.0',
     brand: 'Chevrolet',
     modelName: 'Hatch',
     year: 2024,
     licensePlate: 'ABC1D23',
     color: 'Branco',
+    type: 'Hatch',
+    engine: '1.0 Turbo',
+    size: 5,
     ...overrides,
   });
 
@@ -79,6 +94,9 @@ describe('Vehicles & Reservations API', () => {
       brand: 'Chevrolet',
       modelName: 'Hatch',
       licensePlate: 'ABC1D23',
+      type: 'Hatch',
+      engine: '1.0 Turbo',
+      size: 5,
       status: 'available',
     });
 

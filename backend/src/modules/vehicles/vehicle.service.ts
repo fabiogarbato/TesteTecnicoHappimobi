@@ -72,6 +72,18 @@ export class VehicleService {
       vehicle.color = payload.color;
     }
 
+    if (payload.category !== undefined) {
+      vehicle.category = payload.category;
+    }
+
+    if (payload.engine !== undefined) {
+      vehicle.engine = payload.engine;
+    }
+
+    if (payload.size !== undefined) {
+      vehicle.size = payload.size;
+    }
+
     const updated = await vehicle.save();
     return toVehicleResponse(updated);
   }

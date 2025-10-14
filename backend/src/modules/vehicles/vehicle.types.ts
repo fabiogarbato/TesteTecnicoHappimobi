@@ -7,6 +7,9 @@ export interface CreateVehicleInput {
   year: number;
   licensePlate: string;
   color?: string;
+  category?: string;
+  engine?: string;
+  size?: number;
 }
 
 export interface UpdateVehicleInput {
@@ -16,6 +19,9 @@ export interface UpdateVehicleInput {
   year?: number;
   licensePlate?: string;
   color?: string;
+  category?: string;
+  engine?: string;
+  size?: number;
 }
 
 export interface VehicleResponse {
@@ -26,6 +32,9 @@ export interface VehicleResponse {
   year: number;
   licensePlate: string;
   color?: string;
+  type?: string;
+  engine?: string;
+  size?: number;
   status: VehicleStatus;
   createdAt: Date;
   updatedAt: Date;

@@ -27,14 +27,47 @@ const ensureValidYear = (year: number): number => {
   return year;
 };
 
+const parseOptionalSize = (value: unknown): number | undefined => {
+  if (value === undefined || value === null || value === '') {
+    return undefined;
+  }
+
+  if (typeof value === 'number' && Number.isInteger(value)) {
+    if (value < 1) {
+      throw new HttpError(400, 'Capacidade deve ser um número inteiro positivo');
+    }
+    return value;
+  }
+
+  if (typeof value === 'string' && value.trim() !== '' && Number.isInteger(Number(value))) {
+    const parsed = Number(value);
+    if (parsed < 1) {
+      throw new HttpError(400, 'Capacidade deve ser um número inteiro positivo');
+    }
+    return parsed;
+  }
+
+  throw new HttpError(400, 'Capacidade deve ser um número inteiro');
+};
+
+type RawVehiclePayload = {
+  name?: unknown;
+  brand?: unknown;
+  modelName?: unknown;
+  year?: unknown;
+  licensePlate?: unknown;
+  color?: unknown;
+  type?: unknown;
+  engine?: unknown;
+  size?: unknown;
+};
+
 export const validateCreateVehicleInput = (payload: unknown): CreateVehicleInput => {
   if (typeof payload !== 'object' || payload === null) {
     throw new HttpError(400, 'Payload inválido');
   }
 
-  const { name, brand, modelName, year, licensePlate, color } = payload as Partial<CreateVehicleInput> & {
-    year?: unknown;
-  };
+  const { name, brand, modelName, year, licensePlate, color, type, engine, size } = payload as RawVehiclePayload;
 
   if (!isNonEmptyString(name)) {
     throw new HttpError(400, 'Nome é obrigatório');
@@ -53,6 +86,7 @@ export const validateCreateVehicleInput = (payload: unknown): CreateVehicleInput
   }
 
   const parsedYear = ensureValidYear(parseYear(year));
+  const parsedSize = parseOptionalSize(size);
 
   const normalizedPlate = licensePlate.toUpperCase();
 
@@ -63,6 +97,9 @@ export const validateCreateVehicleInput = (payload: unknown): CreateVehicleInput
     year: parsedYear,
     licensePlate: normalizedPlate,
     color: isNonEmptyString(color) ? color : undefined,
+    category: isNonEmptyString(type) ? type : undefined,
+    engine: isNonEmptyString(engine) ? engine : undefined,
+    size: parsedSize,
   };
 };
 
@@ -71,9 +108,7 @@ export const validateUpdateVehicleInput = (payload: unknown): UpdateVehicleInput
     throw new HttpError(400, 'Payload inválido');
   }
 
-  const { name, brand, modelName, year, licensePlate, color } = payload as Partial<UpdateVehicleInput> & {
-    year?: unknown;
-  };
+  const { name, brand, modelName, year, licensePlate, color, type, engine, size } = payload as RawVehiclePayload;
 
   const update: UpdateVehicleInput = {};
 
@@ -114,6 +149,24 @@ export const validateUpdateVehicleInput = (payload: unknown): UpdateVehicleInput
       throw new HttpError(400, 'Cor deve ser uma string não vazia');
     }
     update.color = color;
+  }
+
+  if (type !== undefined) {
+    if (!isOptionalString(type)) {
+      throw new HttpError(400, 'Tipo deve ser uma string não vazia');
+    }
+    update.category = type;
+  }
+
+  if (engine !== undefined) {
+    if (!isOptionalString(engine)) {
+      throw new HttpError(400, 'Motor deve ser uma string não vazia');
+    }
+    update.engine = engine;
+  }
+
+  if (size !== undefined) {
+    update.size = parseOptionalSize(size);
   }
 
   if (Object.keys(update).length === 0) {
