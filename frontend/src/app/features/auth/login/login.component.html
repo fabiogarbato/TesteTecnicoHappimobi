@@ -34,9 +34,9 @@
     </div>
 
     <div class="auth-card__actions">
-      <button type="button" class="link" (click)="goToForgotPassword()">
+      <a routerLink="/forgot-password" class="link">
         Esqueceu sua senha?
-      </button>
+      </a>
     </div>
 
     <p class="auth-card__error" *ngIf="errorMessage()">

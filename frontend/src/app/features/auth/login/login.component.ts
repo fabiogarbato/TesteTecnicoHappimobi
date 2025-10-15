@@ -54,8 +54,4 @@ export class LoginComponent {
       this.submitting.set(false);
     }
   }
-
-  goToForgotPassword(): void {
-    void this.router.navigate(['/forgot-password']);
-  }
 }

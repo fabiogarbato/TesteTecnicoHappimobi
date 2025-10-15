@@ -23,19 +23,22 @@ interface ResetPasswordRequest {
   password: string;
 }
 
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export interface AuthResponse {
   token: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
+  user: AuthUser;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly storageKey = 'happimobi:auth-token';
+  private readonly userStorageKey = 'happimobi:auth-user';
 
   private getDefaultApiUrl(): string {
     if (typeof window === 'undefined') {
@@ -54,6 +57,7 @@ export class AuthService {
     const response$ = this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
     const response = await firstValueFrom(response$);
     this.setToken(response.token);
+    this.setCurrentUser(response.user);
     return response;
   }
 
@@ -61,6 +65,7 @@ export class AuthService {
     const response$ = this.http.post<AuthResponse>(`${this.apiUrl}/register`, payload);
     const response = await firstValueFrom(response$);
     this.setToken(response.token);
+    this.setCurrentUser(response.user);
     return response;
   }
 
@@ -73,6 +78,7 @@ export class AuthService {
     const response$ = this.http.post<AuthResponse>(`${this.apiUrl}/reset-password`, payload);
     const response = await firstValueFrom(response$);
     this.setToken(response.token);
+    this.setCurrentUser(response.user);
     return response;
   }
 
@@ -86,9 +92,34 @@ export class AuthService {
 
   clearToken(): void {
     localStorage.removeItem(this.storageKey);
+    localStorage.removeItem(this.userStorageKey);
   }
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  setCurrentUser(user: AuthUser): void {
+    localStorage.setItem(this.userStorageKey, JSON.stringify(user));
+  }
+
+  getCurrentUser(): AuthUser | null {
+    const raw = localStorage.getItem(this.userStorageKey);
+
+    if (!raw) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(raw) as AuthUser;
+    } catch (error) {
+      console.warn('Não foi possível interpretar o usuário armazenado', error);
+      localStorage.removeItem(this.userStorageKey);
+      return null;
+    }
+  }
+
+  updateStoredUser(user: AuthUser): void {
+    this.setCurrentUser(user);
   }
 }

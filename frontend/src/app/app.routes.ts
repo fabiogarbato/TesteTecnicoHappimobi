@@ -30,6 +30,16 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
   {
+    path: 'vehicles',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/vehicles/vehicles.component').then((m) => m.VehiclesComponent),
+  },
+  {
+    path: 'reservations',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/reservations/reservations.component').then((m) => m.ReservationsComponent),
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'login',
