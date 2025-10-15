@@ -1,5 +1,10 @@
 import { HttpError } from '../../errors/http-error';
-import { LoginInput, RegisterInput } from './auth.types';
+import {
+  ForgotPasswordInput,
+  LoginInput,
+  RegisterInput,
+  ResetPasswordInput,
+} from './auth.types';
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === 'string' && value.trim().length > 0;
@@ -47,6 +52,41 @@ export const validateRegisterInput = (payload: unknown): RegisterInput => {
   return {
     name,
     email,
+    password,
+  };
+};
+
+export const validateForgotPasswordInput = (payload: unknown): ForgotPasswordInput => {
+  if (typeof payload !== 'object' || payload === null) {
+    throw new HttpError(400, 'Payload inválido');
+  }
+
+  const { email } = payload as Partial<ForgotPasswordInput>;
+
+  if (!isNonEmptyString(email)) {
+    throw new HttpError(400, 'E-mail é obrigatório');
+  }
+
+  return { email };
+};
+
+export const validateResetPasswordInput = (payload: unknown): ResetPasswordInput => {
+  if (typeof payload !== 'object' || payload === null) {
+    throw new HttpError(400, 'Payload inválido');
+  }
+
+  const { token, password } = payload as Partial<ResetPasswordInput>;
+
+  if (!isNonEmptyString(token)) {
+    throw new HttpError(400, 'Token é obrigatório');
+  }
+
+  if (!isNonEmptyString(password)) {
+    throw new HttpError(400, 'Senha é obrigatória');
+  }
+
+  return {
+    token,
     password,
   };
 };

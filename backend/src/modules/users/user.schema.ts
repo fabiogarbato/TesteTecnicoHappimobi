@@ -4,6 +4,8 @@ export interface UserDocument extends Document {
   name: string;
   email: string;
   password: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiresAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,6 +28,16 @@ const userSchema = new Schema<UserDocument>(
       type: String,
       required: true,
     },
+    resetPasswordToken: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    resetPasswordExpiresAt: {
+      type: Date,
+      required: false,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -41,6 +53,8 @@ userSchema.set('toJSON', {
     Reflect.deleteProperty(transformed, '_id');
     Reflect.deleteProperty(transformed, '__v');
     Reflect.deleteProperty(transformed, 'password');
+    Reflect.deleteProperty(transformed, 'resetPasswordToken');
+    Reflect.deleteProperty(transformed, 'resetPasswordExpiresAt');
 
     return transformed;
   },

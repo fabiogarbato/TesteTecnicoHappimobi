@@ -33,6 +33,12 @@
       </small>
     </div>
 
+    <div class="auth-card__actions">
+      <button type="button" class="link" (click)="goToForgotPassword()">
+        Esqueceu sua senha?
+      </button>
+    </div>
+
     <p class="auth-card__error" *ngIf="errorMessage()">
       {{ errorMessage() }}
     </p>

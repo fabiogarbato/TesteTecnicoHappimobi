@@ -17,3 +17,17 @@ export interface RegisterInput {
   email: string;
   password: string;
 }
+
+export interface ForgotPasswordInput {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+  resetToken?: string;
+}
+
+export interface ResetPasswordInput {
+  token: string;
+  password: string;
+}

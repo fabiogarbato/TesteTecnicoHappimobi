@@ -13,6 +13,16 @@ interface RegisterRequest {
   password: string;
 }
 
+interface ForgotPasswordResponse {
+  message: string;
+  resetToken?: string;
+}
+
+interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
 export interface AuthResponse {
   token: string;
   user: {
@@ -49,6 +59,18 @@ export class AuthService {
 
   async register(payload: RegisterRequest): Promise<AuthResponse> {
     const response$ = this.http.post<AuthResponse>(`${this.apiUrl}/register`, payload);
+    const response = await firstValueFrom(response$);
+    this.setToken(response.token);
+    return response;
+  }
+
+  async requestPasswordReset(email: string): Promise<ForgotPasswordResponse> {
+    const response$ = this.http.post<ForgotPasswordResponse>(`${this.apiUrl}/forgot-password`, { email });
+    return firstValueFrom(response$);
+  }
+
+  async resetPassword(payload: ResetPasswordRequest): Promise<AuthResponse> {
+    const response$ = this.http.post<AuthResponse>(`${this.apiUrl}/reset-password`, payload);
     const response = await firstValueFrom(response$);
     this.setToken(response.token);
     return response;

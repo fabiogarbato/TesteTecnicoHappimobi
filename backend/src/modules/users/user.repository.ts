@@ -11,6 +11,13 @@ export class UserRepository {
     return UserModel.findOne({ email }).exec();
   }
 
+  async findByResetToken(token: string): Promise<UserDocument | null> {
+    return UserModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpiresAt: { $gt: new Date() },
+    }).exec();
+  }
+
   async findById(id: string): Promise<UserDocument | null> {
     return UserModel.findById(id).exec();
   }
@@ -25,5 +32,31 @@ export class UserRepository {
 
   async findAll(): Promise<UserDocument[]> {
     return UserModel.find().sort({ createdAt: -1 }).exec();
+  }
+
+  async setResetPasswordToken(
+    id: string,
+    token: string,
+    expiresAt: Date,
+  ): Promise<UserDocument | null> {
+    return UserModel.findByIdAndUpdate(
+      id,
+      {
+        resetPasswordToken: token,
+        resetPasswordExpiresAt: expiresAt,
+      },
+      { new: true },
+    ).exec();
+  }
+
+  async clearResetPasswordToken(id: string): Promise<UserDocument | null> {
+    return UserModel.findByIdAndUpdate(
+      id,
+      {
+        resetPasswordToken: null,
+        resetPasswordExpiresAt: null,
+      },
+      { new: true },
+    ).exec();
   }
 }
